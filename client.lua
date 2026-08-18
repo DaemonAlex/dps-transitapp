@@ -1,6 +1,4 @@
-CreateThread(function()
-    while GetResourceState('lb-phone') ~= 'started' do Wait(1000) end
-    Wait(2000)
+local function registerApp()
     local ok, err = pcall(function()
         exports['lb-phone']:AddCustomApp({
             identifier = 'dps_transit',
@@ -14,6 +12,22 @@ CreateThread(function()
         })
     end)
     if not ok then print('^1[dps-transitapp] AddCustomApp failed: ' .. tostring(err) .. '^7') end
+end
+
+-- Register on start, and RE-register if lb-phone restarts after us (otherwise the
+-- Transit app silently disappears until this resource is restarted too).
+CreateThread(function()
+    while GetResourceState('lb-phone') ~= 'started' do Wait(1000) end
+    Wait(2000)
+    registerApp()
+end)
+
+AddEventHandler('onResourceStart', function(res)
+    if res ~= 'lb-phone' then return end
+    CreateThread(function()
+        Wait(5000)
+        registerApp()
+    end)
 end)
 
 RegisterNUICallback('getBoard', function(_, cb)
