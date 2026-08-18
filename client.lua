@@ -20,7 +20,11 @@ RegisterNUICallback('getBoard', function(_, cb)
     local board = lib.callback.await('dps-transitapp:getBoard', false) or {}
     local pos = GetEntityCoords(PlayerPedId())
     for _, st in ipairs(board) do
-        st.dist = math.floor(#(vector2(pos.x, pos.y) - vector2(st.coords.x, st.coords.y)))
+        if st.coords and type(st.coords.x) == 'number' and type(st.coords.y) == 'number' then
+            st.dist = math.floor(#(vector2(pos.x, pos.y) - vector2(st.coords.x, st.coords.y)))
+        else
+            st.dist = -1  -- unknown; UI renders this as blank rather than NaN
+        end
     end
     table.sort(board, function(a, b) return a.dist < b.dist end)
     cb(board)

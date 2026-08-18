@@ -7,7 +7,7 @@
   body { background: #101418; color: #e8ecf1; height: 100vh; overflow-y: auto; }
   header { padding: 42px 18px 10px; background: linear-gradient(180deg, #16202b, #101418); position: sticky; top: 0; }
   header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
-  header p { font-size: 11px; color: #7d8pa0; color: #7d8a9a; margin-top: 2px; }
+  header p { font-size: 11px; color: #7d8a9a; margin-top: 2px; }
   .station { margin: 10px 12px; background: #161c24; border-radius: 14px; overflow: hidden; }
   .station-head { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 14px 6px; }
   .station-head .name { font-size: 15px; font-weight: 650; }
@@ -29,10 +29,23 @@
 <div id="list"></div>
 <footer>DPS Transit Authority</footer>
 <script>
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, function(c) {
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
 function fmtEta(s) {
+  if (typeof s !== 'number' || isNaN(s)) return '--';
   if (s < 45) return 'Due';
-  const m = Math.round(s / 60);
-  return m + ' min';
+  return Math.round(s / 60) + ' min';
+}
+function fmtDist(d) {
+  if (typeof d !== 'number' || d < 0 || isNaN(d)) return '';
+  return d < 1500 ? d + 'm' : (d / 1000).toFixed(1) + 'km';
+}
+// only allow simple hex / rgb() colors from the server into the style attribute
+function safeColor(c) {
+  return (typeof c === 'string' && /^(#[0-9a-fA-F]{3,8}|rgb\([\d,\s.]+\)|rgba\([\d,\s.]+\))$/.test(c)) ? c : '#888';
 }
 async function refresh() {
   try {
@@ -50,16 +63,20 @@ async function refresh() {
       const arr = (st.arrivals || []).slice(0, 3);
       if (!arr.length) rows = '<div class="empty">No service</div>';
       for (const a of arr) {
-        rows += `<div class="row"><span class="dot" style="background:${a.color}"></span>` +
-          `<span class="train">${a.train}</span>` +
-          `<span class="status ${a.status.replace(' ', '')}">${a.status}</span>` +
+        const status = a.status || 'en route';
+        const statusClass = status.replace(/[^a-z]/gi, '');
+        rows += `<div class="row"><span class="dot" style="background:${safeColor(a.color)}"></span>` +
+          `<span class="train">${esc(a.train)}</span>` +
+          `<span class="status ${statusClass}">${esc(status)}</span>` +
           `<span class="eta">${fmtEta(a.eta)}</span></div>`;
       }
-      div.innerHTML = `<div class="station-head"><span class="name">${st.station}${metroTag}</span>` +
-        `<span class="dist">${st.dist < 1500 ? st.dist + 'm' : (st.dist / 1000).toFixed(1) + 'km'}</span></div>` + rows;
+      div.innerHTML = `<div class="station-head"><span class="name">${esc(st.station)}${metroTag}</span>` +
+        `<span class="dist">${fmtDist(st.dist)}</span></div>` + rows;
       el.appendChild(div);
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error('[dps-transit] refresh failed:', e);
+  }
 }
 refresh();
 setInterval(refresh, 5000);
