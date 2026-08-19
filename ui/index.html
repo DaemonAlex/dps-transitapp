@@ -49,7 +49,10 @@ function safeColor(c) {
 }
 async function refresh() {
   try {
-    const res = await fetch(`https://${GetParentResourceName ? GetParentResourceName() : 'dps-transitapp'}/getBoard`, {
+    // NOTE: do NOT use GetParentResourceName() here. Inside an lb-phone custom app
+    // the UI runs in lb-phone's frame, so it resolves to 'lb-phone' and the request
+    // never reaches this resource - which is why the board was always empty.
+    const res = await fetch('https://dps-transitapp/getBoard', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}'
     });
     const board = await res.json();
