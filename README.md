@@ -11,7 +11,7 @@ on.
 
 ```
 Los Santos Transit
-Del Perro Sands · live arrivals
+DelPerroSands · live arrivals
 
 Sandy Shores          Axsellya Express    3 stops away    8 min
 Paleto Bay            Brown Streak        next stop       2 min
