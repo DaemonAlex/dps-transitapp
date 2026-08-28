@@ -3,7 +3,7 @@ local function registerApp()
         exports['lb-phone']:AddCustomApp({
             identifier = 'dps_transit',
             name = 'Transit',
-            description = 'Live train arrivals across Del Perro Sands',
+            description = 'Live train arrivals across DelPerroSands',
             developer = 'DPS Transit Authority',
             defaultApp = true,
             size = 512,
