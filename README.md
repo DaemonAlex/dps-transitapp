@@ -2,6 +2,10 @@
 
 An lb-phone custom app that shows live train arrivals for every station, nearest station first.
 
+## What it is for
+
+A player on a platform cannot tell when the next train comes, or whether one comes at all. This app answers that on the phone: which train is next at each station, how far away it is, and how long until it arrives.
+
 ## Features
 
 - One card per station, sorted by distance from the player (shown as `m` or `km`).
@@ -16,6 +20,16 @@ An lb-phone custom app that shows live train arrivals for every station, nearest
 - A station with no arrivals shows `No service`.
 - The board refreshes every 5 seconds while the app is open.
 - The resource does no scheduling. It only displays what the train resource returns.
+
+## On its own, and with other scripts
+
+**On its own.** This script does nothing alone. It is a screen for two other resources: the phone and the train system. With `lb-phone` but no `dps-trains`, the app still installs and every station reads `No service`.
+
+**With a paid phone (lb-phone).** The app shows on the phone home screen as Transit. The script uses one lb-phone export, `AddCustomApp`, and nothing else from the phone. It registers again when lb-phone restarts. A phone update does not break it unless that export changes.
+
+**With dps-trains.** The board is live. Every 5 seconds the app reads the `getArrivalBoard` export from dps-trains and shows the result. It only reads. It cannot change a train, so a fault here cannot stop the railway.
+
+**With dps-trains-stock, dps-traintools and dps-traintracks.** No direct link. dps-trains-stock is the trains, dps-traintracks is extra track, dps-trains runs them, and dps-traintools lets the player board the train the app told them about.
 
 ## Prerequisites
 
@@ -78,3 +92,43 @@ To change any of these, edit the file listed.
 - **A station has no distance.** Its `coords` are missing or not numbers. The distance is left blank and the station sorts first.
 - **A dependency change is ignored after a restart.** The server caches the parsed manifest. Run `refresh` before restarting the resource.
 - **An image shows as broken.** Images in the UI must be inlined (data URI). Relative paths resolve against lb-phone and fail.
+
+## Recent changes
+
+- **12 November 2026.** README: what it is for, how it works alone and with paid scripts, other DPS scripts.
+- **25 October 2026.** Repo brought up to what runs on the live server.
+- **11 October 2026.** The header shows the DelPerroSands logo only. The LS Transit logo is removed.
+- **10 October 2026.** Cream backing behind the logo. The house logo replaces the "DPS" text in the footer.
+- **4 October 2026.** Light Rail shows as Metro and Regional Train as Axsellya Express. Stations on track 0 get the `REGIONAL` tag.
+
+## Author
+
+Made by [DaemonAlex](https://github.com/DaemonAlex) for DelPerroSands.
+
+## Other DPS scripts
+
+All of these are made for DelPerroSands and run together on one Qbox server. Each one works on
+its own. The ones marked "pairs with" do more when both are running.
+
+| Script | What it does |
+|---|---|
+| [dps-inventory](https://github.com/DaemonAlex/dps-inventory) | The inventory: ox_inventory with equipment slots, backpacks, armour plates and a self status panel, in the DelPerroSands colours. |
+| [dps-medical](https://github.com/DaemonAlex/dps-medical) | Patient records, illness and diagnostic tests. A companion to wasabi_ambulance. Pairs with dps-inventory: symptoms and diagnoses show on the status panel. |
+| [dps-insurance](https://github.com/DaemonAlex/dps-insurance) | Ties m-Insurance into the MDT, impound, hospital and medical chart. Pairs with dps-medical. |
+| [dps-studio](https://github.com/DaemonAlex/dps-studio) | Build rooms, doors and portals in game from one panel (`/studio`), with owners and managers so staff do not have to support them. |
+| [dps-shops](https://github.com/DaemonAlex/dps-shops) | Shop clerks who greet and react to a robbery, then player-owned shops. |
+| [dps-fleet](https://github.com/DaemonAlex/dps-fleet) | Vehicle browser and workshop on one panel: extras, liveries and mods for emergency vehicles. |
+| [dps-parking](https://github.com/DaemonAlex/dps-parking) | Parking with valet, impound, violations and reserved spots. |
+| [dps-vehiclepersistence](https://github.com/DaemonAlex/dps-vehiclepersistence) | Vehicles stay where they were parked. Pairs with dps-parking. |
+| [dps-towjob](https://github.com/DaemonAlex/dps-towjob) | Queue-based tow job with jg-mechanic integration. |
+| [dps-services](https://github.com/DaemonAlex/dps-services) | Request a tow and follow it live on the lb-phone and lb-tablet. Pairs with dps-towjob. |
+| [dps-autoshops](https://github.com/DaemonAlex/dps-autoshops) | Self-service repair shops when no mechanic is on duty. |
+| [dps-cityworker](https://github.com/DaemonAlex/dps-cityworker) | City infrastructure job and career. |
+| [dps-ainpcs](https://github.com/DaemonAlex/dps-ainpcs) | NPCs you can talk to, with trust, quests and intel. |
+| [dps-badpeds](https://github.com/DaemonAlex/dps-badpeds) | Police interaction with NPCs: stops, arrests, intel and jail records. |
+| [dps-gangwars](https://github.com/DaemonAlex/dps-gangwars) | Ambient gang NPCs, territory population and war reinforcements. |
+| [dps-rotations](https://github.com/DaemonAlex/dps-rotations) | Moves dealers, harvests and other spots on a fixed schedule. |
+| [dps-trains](https://github.com/DaemonAlex/dps-trains) | The train system. Pairs with dps-trains-stock, dps-traintools and dps-transitapp. |
+| [dps-faceplant](https://github.com/DaemonAlex/dps-faceplant) | City help, reports and staff tools on the lb-phone and lb-tablet. |
+| [dps-chat](https://github.com/DaemonAlex/dps-chat) | A command box for voice-only servers. No chat feed. |
+| [dps-filmmode](https://github.com/DaemonAlex/dps-filmmode) | One key hides every HUD layer and gives a smooth free camera for recording. |
